@@ -1,4 +1,167 @@
-캐글 단축키
+Machine Learning 스터디
+	각종 정보들
+		사이킷런
+		텐서플로우
+		케라스
+		파이토치
+		
+		판다스 사용 연습
+		
+		
+	
+	
+	실전 테스트 사이트
+		캐글
+		dacon
+	
+
+"---------------------------- 캐글 input, zip 압축 해제 및 폴더 구조 확인 --------------------"
+상황1) 
+	kaggle 에서 denoising-dirty-documents 대회가 연습이 바로 안되어 있음. 
+	그래서 그냥 아무 notebook을 만들고 거기에 denosing-dirty-documents 의 input data를 넣어서 해보려고 함
+		// 헌데 압축된 것임. 그것도 이미지들의 압축임
+	궁금한점: 
+		a. "캐글에서 압축 해제" 
+		b. "input 폴더 구조 및 갯수가 많은 파일들을 확인하기"
+		c. "캐글에서 파이선 conda list 출력"
+		
+		
+import zipfile
+// 유용한 사이트
+from subprocess import check_out // https://www.kaggle.com/mchirico/how-to-read-datasets/notebook
+
+/*	1) 현 폴더 출력	*/ // !!!!
+print("pwd \n", check_output(["pwd"]).decode("utf8")) // utf8 로 해주어야 보기 편하다.
+	pwd
+	 /kaggle/working	// !!!! 중요
+	 
+/*	2) 현 디렉토리의 내용을 자세히 출력	*/
+print("ls -l \n", check_output(["ls", "-l"]).decode("utf8")) // 현디렉토리의 내용을 자세히 출력
+// 현 디렉토리의 내용을 자세히 출력한다.
+	ls -l 
+	 total 4
+	 ---------- 1 root root 263 Jan 29 04:51 __notebook_source__.ipynb
+/*	3) 현 디렉토리의 내용을 허접하게 출력	*/
+print("ls \n", check_output(["ls"]).decode("utf8"))
+	ls 
+	 __notebook_source__.ipynb
+	 
+/*	4) 캐글 input 으로 들어가는 zip 파일들을 확인	*/
+print("ls ../input/denoising-dirty-documents \n", check_output(["ls", "../input/denoising-dirty-documents"]).decode("utf8"))
+	ls ../input/denoising-dirty-documents 
+	 sampleSubmission.csv.zip
+	test.zip
+	train.zip
+	train_cleaned.zip
+
+/*	5) 현 폴더의 상위 폴더구조	*/	// 중요
+print("ls .. \n", check_output(["ls", ".."]).decode("utf8"))
+	ls .. 	
+	 input
+	lib
+	working
+	
+/*	6) input 폴더 확인	*/
+print("ls ../input \n", check_output(["ls", "../input"]).decode("utf8"))
+	ls ../input 
+	denoising-dirty-documents
+	
+/*	7) 압축을 풀어보자. */	
+!unzip -f 'test.zip' // replace test/1.png? [y]es, [n]o, [A]ll, [N]one, [r]ename:  방지를 위해 -f 옵션 넣는다. 노노 -u 추천
+	// working directory가  kaggle/working 이고 
+	// test.zip 은 /kaggle/input/denoising-dirty-documents 내에 있으로 바로 접근이 된다.
+	"헌데 이렇게 압축을 풀면 푸는 위치는 kaggle/working 이 된다능. 
+	"주의사항" 처음 압출을 풀때는 -f 옵션은 사용하면 안된다. 저것은 압축이 풀린 파일이 하나도 없으면 동작하지 않는다. 풀린 놈들에 한해서 갱신
+	https://m.blog.naver.com/PostView.nhn?blogId=koromoon&logNo=220579464378&proxyReferer=https:%2F%2Fwww.google.com%2F
+	더 좋은걸 사용하자.
+	!unzip -u 'test.zip' // 최초시작때 압축이 풀린 파일이 없는 경우에도 동작한다.
+// 제대로 풀렴 아래처럼 출력된다.	
+Archive:  ../input/denoising-dirty-documents/train.zip
+	   creating: train/
+	  inflating: train/101.png           
+	  inflating: train/102.png           
+	  inflating: train/104.png           
+	  inflating: train/105.png           
+	 extracting: train/107.png           
+	 extracting: train/108.png           
+	 extracting: train/11.png        	
+	...	
+실습에서는 다음과 같이 쓰자.
+! unzip -u "../input/denoising-dirty-documents/train.zip"
+
+
+// 테스트
+
+import zipfile
+from subprocess import check_output
+import glob
+print(check_output(["pwd", ".."]).decode("utf8"))
+print(check_output(["ls"]).decode("utf8"))
+! unzip -u "test.zip"
+! unzip -u "../input/denoising-dirty-documents/train.zip"
+! unzip -u "../input/denoising-dirty-documents/train.zip" -d "../input/denoising-dirty-documents" # 쓰기 불가능하다.
+
+print(check_output(["pwd", ".."]).decode("utf8"))
+print(check_output(["ls"]).decode("utf8"))
+
+
+/kaggle/working
+// ls 결과 notebook 이 있음요.
+__notebook_source__.ipynb
+
+// 주소를 확실히 기록해야 함
+unzip:  cannot find or open test.zip, test.zip.zip or test.zip.ZIP.
+
+// 잘 풀린다. 목적지는 pwd(/kaggle/working) 이다 
+Archive:  ../input/denoising-dirty-documents/train.zip
+   creating: train/
+  inflating: train/101.png           
+  inflating: train/102.png           
+  inflating: train/104.png           
+  inflating: train/105.png           
+ extracting: train/107.png           
+ extracting: train/108.png           
+ extracting: train/11.png            
+...         
+  inflating: train/98.png            
+  inflating: train/99.png
+  
+// 목적지가 Read-only 라서 읽기 전용.. 데이터 압축을 풀 수가 없다.
+Archive:  ../input/denoising-dirty-documents/train.zip
+checkdir error:  cannot create ../input/denoising-dirty-documents/train
+                 Read-only file system
+                 unable to process train/.
+checkdir error:  cannot create ../input/denoising-dirty-documents/train
+                 Read-only file system
+                 unable to process train/101.png.
+checkdir error:  cannot create ../input/denoising-dirty-documents/train
+                 Read-only file system
+                 unable to process train/102.png.
+...
+checkdir error:  cannot create ../input/denoising-dirty-documents/train
+                 Read-only file system
+                 unable to process train/98.png.
+checkdir error:  cannot create ../input/denoising-dirty-documents/train
+                 Read-only file system
+                 unable to process train/99.png.
+
+/kaggle/working
+// ls 결과 train 폴더가 생성됨을 확인할 수 있다.
+__notebook_source__.ipynb
+train	// 생성된것
+
+
+/*	캐글에서 python에 설치된 것들을 출력해보기	*/
+from subprocess import check_output
+print(check_output(["conda", "list"]).decode("utf8")) // 시간이 좀 걸린다네
+
+
+
+
+
+
+
+"---------------------------- 캐글 단축키 -------------------------"
 https://www.kaggle.com/fulrose/smart/comments	// 아무도 가르쳐주지 않는 Smart한 커널 사용법(단축키 버전)
 editor mode: enter
 command mode: 
@@ -54,6 +217,9 @@ pd.concat?		// 실행하면 됨
 
 # 하드하게 짜여진 코드 까지 보고 싶다면?
 pd.concat??		// 실행하면 됨
+
+
+
 
 
 "//----01. 타이타닉_Preparation----//"
