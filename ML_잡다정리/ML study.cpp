@@ -13,6 +13,12 @@ Machine Learning 스터디
 	실전 테스트 사이트
 		캐글
 		dacon
+
+
+
+https://www.kaggle.com/general/24004
+케라스에서 백엔드로 텐서플로우 말고 시아노(Theano) 를 사용하고자 할때
+	%env KERAS_BACKEND=theano
 	
 
 "---------------------------- 캐글 input, zip 압축 해제 및 폴더 구조 확인 --------------------"
@@ -76,7 +82,7 @@ print("ls ../input \n", check_output(["ls", "../input"]).decode("utf8"))
 	더 좋은걸 사용하자.
 	!unzip -u 'test.zip' // 최초시작때 압축이 풀린 파일이 없는 경우에도 동작한다.
 // 제대로 풀렴 아래처럼 출력된다.	
-Archive:  ../input/denoising-dirty-documents/train.zip
+Archive:  ../input/denoising-dirty-documents/train.zip // 캐글에서 'test.zip' 로 읽으려고 하니 에러나더라 완전한 주소를 넣자
 	   creating: train/
 	  inflating: train/101.png           
 	  inflating: train/102.png           
